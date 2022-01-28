@@ -35,30 +35,12 @@ namespace TrocoEmNotas
 
         private void textBoxTotal_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            // only allow one decimal point
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            MascaraValor(sender, e);
         }
 
         private void textBoxPago_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            // only allow one decimal point
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
+            MascaraValor(sender, e);
         }
         #endregion
 
@@ -104,12 +86,32 @@ namespace TrocoEmNotas
 
         private void ValidaValor(object sender)
         {
-            var texto = (TextBox)sender;
-            if (!string.IsNullOrEmpty(texto.Text))
+            if (!((TextBox)sender).Text.Equals(""))
             {
-                decimal numero = Convert.ToDecimal(texto.Text);
-                numero /= 100;
-                texto.Text = $"{numero:#0.00}";
+                try
+                {
+                    string texto = ((TextBox)sender).Text;
+                    var valor = decimal.Parse(texto);
+                    ((TextBox)sender).Text = valor.ToString("###,###,##0.00");
+                }
+                catch
+                {
+                    ((TextBox)sender).Text = "0,00";
+                }
+            }
+        }
+
+        private void MascaraValor(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != ','))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == ',') && ((sender as TextBox).Text.IndexOf(',') > -1))
+            {
+                e.Handled = true;
             }
         }
 
